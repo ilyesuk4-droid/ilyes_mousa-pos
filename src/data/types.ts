@@ -42,7 +42,7 @@ export interface Sale {
 export interface Supplier { id?: number | undefined; name: string; phone: string }
 export interface PurchaseLine { productId: number; name: string; qty: number; purchasePrice: number }
 export interface Purchase { id?: number | undefined; date: number; supplierId?: number | undefined; supplierName?: string | undefined; items: PurchaseLine[]; total: number }
-export type MovementType = "sale" | "purchase" | "adjust";
+export type MovementType = "sale" | "purchase" | "adjust" | "repair";
 export interface Movement { id?: number | undefined; date: number; productId: number; productName: string; type: MovementType; qty: number; note: string }
 export interface Expense { id?: number | undefined; date: number; category: string; amount: number; note: string }
 export interface Settings {
@@ -55,4 +55,30 @@ export interface Settings {
   paperWidth: 58 | 80;
   language: "ar" | "fr";
   lastBackup?: number | undefined;
+}
+
+export type RepairStatus = "received" | "in_repair" | "ready" | "delivered" | "cancelled";
+export interface RepairPart { productId: number; name: string; qty: number; unitCost: number }
+export interface RepairTicket {
+  id?: number | undefined;
+  number: string;
+  createdAt: number;
+  customerName: string;
+  phone: string;
+  device: string;
+  imei: string;
+  problem: string;
+  condition: string;
+  lockCode: string;
+  price: number;
+  laborCost: number;
+  deposit: number;
+  readyDate?: number | undefined;
+  status: RepairStatus;
+  history: { status: RepairStatus; date: number }[];
+  parts: RepairPart[];
+  paidOnDelivery: number;
+  remaining: number;
+  deliveredAt?: number | undefined;
+  customerId?: number | undefined;
 }

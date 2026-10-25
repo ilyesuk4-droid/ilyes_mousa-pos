@@ -1,6 +1,6 @@
 import { Link, Outlet } from "@tanstack/react-router";
 import {
-  LayoutDashboard, ShoppingCart, Package, Tags, Users, Truck, History, BarChart3, Wallet, Barcode, Settings as Cog, DatabaseBackup, Smartphone, AlertTriangle,
+  LayoutDashboard, ShoppingCart, Package, Tags, Users, Truck, History, BarChart3, Wallet, Barcode, Settings as Cog, DatabaseBackup, Smartphone, AlertTriangle, Wrench,
 } from "lucide-react";
 import { settingsRepo, useData } from "@/data";
 import { useI18n, type TKey } from "@/lib/i18n";
@@ -8,6 +8,7 @@ import { useI18n, type TKey } from "@/lib/i18n";
 const nav: { to: string; key: TKey; icon: typeof Package }[] = [
   { to: "/", key: "dashboard", icon: LayoutDashboard },
   { to: "/pos", key: "pos", icon: ShoppingCart },
+  { to: "/repairs", key: "repairs", icon: Wrench },
   { to: "/products", key: "products", icon: Package },
   { to: "/categories", key: "categories", icon: Tags },
   { to: "/customers", key: "customers", icon: Users },

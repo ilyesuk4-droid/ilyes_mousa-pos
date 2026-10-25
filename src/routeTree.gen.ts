@@ -19,8 +19,10 @@ import { Route as MovementsRouteImport } from './routes/movements'
 import { Route as PosRouteImport } from './routes/pos'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as PurchasesRouteImport } from './routes/purchases'
+import { Route as RepairsRouteImport } from './routes/repairs'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as RepairsIdRouteImport } from './routes/repairs_.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -72,6 +74,11 @@ const PurchasesRoute = PurchasesRouteImport.update({
   path: '/purchases',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RepairsRoute = RepairsRouteImport.update({
+  id: '/repairs',
+  path: '/repairs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -80,6 +87,11 @@ const ReportsRoute = ReportsRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RepairsIdRoute = RepairsIdRouteImport.update({
+  id: '/repairs_/$id',
+  path: '/repairs/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -94,8 +106,10 @@ export interface FileRoutesByFullPath {
   '/pos': typeof PosRoute
   '/products': typeof ProductsRoute
   '/purchases': typeof PurchasesRoute
+  '/repairs': typeof RepairsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/repairs/$id': typeof RepairsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -108,8 +122,10 @@ export interface FileRoutesByTo {
   '/pos': typeof PosRoute
   '/products': typeof ProductsRoute
   '/purchases': typeof PurchasesRoute
+  '/repairs': typeof RepairsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/repairs/$id': typeof RepairsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -123,8 +139,10 @@ export interface FileRoutesById {
   '/pos': typeof PosRoute
   '/products': typeof ProductsRoute
   '/purchases': typeof PurchasesRoute
+  '/repairs': typeof RepairsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/repairs_/$id': typeof RepairsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -139,8 +157,10 @@ export interface FileRouteTypes {
     | '/pos'
     | '/products'
     | '/purchases'
+    | '/repairs'
     | '/reports'
     | '/settings'
+    | '/repairs/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -153,8 +173,10 @@ export interface FileRouteTypes {
     | '/pos'
     | '/products'
     | '/purchases'
+    | '/repairs'
     | '/reports'
     | '/settings'
+    | '/repairs/$id'
   id:
     | '__root__'
     | '/'
@@ -167,8 +189,10 @@ export interface FileRouteTypes {
     | '/pos'
     | '/products'
     | '/purchases'
+    | '/repairs'
     | '/reports'
     | '/settings'
+    | '/repairs_/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -182,8 +206,10 @@ export interface RootRouteChildren {
   PosRoute: typeof PosRoute
   ProductsRoute: typeof ProductsRoute
   PurchasesRoute: typeof PurchasesRoute
+  RepairsRoute: typeof RepairsRoute
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
+  RepairsIdRoute: typeof RepairsIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -258,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PurchasesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/repairs': {
+      id: '/repairs'
+      path: '/repairs'
+      fullPath: '/repairs'
+      preLoaderRoute: typeof RepairsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reports': {
       id: '/reports'
       path: '/reports'
@@ -270,6 +303,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/repairs_/$id': {
+      id: '/repairs_/$id'
+      path: '/repairs/$id'
+      fullPath: '/repairs/$id'
+      preLoaderRoute: typeof RepairsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -286,8 +326,10 @@ const rootRouteChildren: RootRouteChildren = {
   PosRoute: PosRoute,
   ProductsRoute: ProductsRoute,
   PurchasesRoute: PurchasesRoute,
+  RepairsRoute: RepairsRoute,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
+  RepairsIdRoute: RepairsIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

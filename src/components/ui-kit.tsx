@@ -67,8 +67,8 @@ export function Table({ head, children }: { head: ReactNode[]; children: ReactNo
   );
 }
 export const Td = ({ children, className }: { children?: ReactNode; className?: string }) => <td className={cn("px-3 py-2.5", className)}>{children}</td>;
-export function Badge({ children, tone = "default" }: { children: ReactNode; tone?: "default" | "success" | "warning" | "danger" }) {
-  const c = { default: "bg-muted text-foreground", success: "bg-success/15 text-success", warning: "bg-warning/25 text-warning-foreground", danger: "bg-destructive/10 text-destructive" }[tone];
+export function Badge({ children, tone = "default" }: { children: ReactNode; tone?: "default" | "success" | "warning" | "danger" | "info" }) {
+  const c = { default: "bg-muted text-foreground", info: "bg-primary/15 text-primary", success: "bg-success/15 text-success", warning: "bg-warning/25 text-warning-foreground", danger: "bg-destructive/10 text-destructive" }[tone];
   return <span className={cn("inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold", c)}>{children}</span>;
 }
 

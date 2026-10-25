@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { saleProfit, statsRepo, useData } from "@/data";
+import { repairProfit, saleProfit, statsRepo, useData } from "@/data";
 import { useI18n } from "@/lib/i18n";
 import { Field, Input, PageHeader, Stat, Table, Td, Badge, dayEnd, dayStart, todayStr } from "@/components/ui-kit";
 
@@ -29,10 +29,12 @@ function Reports() {
       </PageHeader>
       {r && (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <Stat label={t("revenue")} value={money(r.revenue)} />
             <Stat label={t("collected")} value={money(r.collected)} />
             <Stat label={t("profit")} value={money(r.profit)} tone="success" />
+            <Stat label={t("repairIncome")} value={money(r.repairIncome)} />
+            <Stat label={t("repairProfit")} value={money(r.repairProfit)} tone="success" />
             <Stat label={t("expenses")} value={money(r.expenseTotal)} tone="danger" />
             <Stat label={t("netProfit")} value={money(r.net)} tone={r.net >= 0 ? "success" : "danger"} />
           </div>
@@ -45,6 +47,17 @@ function Reports() {
                 <Td className="font-semibold">{money(s.total)}</Td>
                 <Td>{s.remaining > 0 ? <Badge tone="warning">{money(s.paid)}</Badge> : money(s.paid)}</Td>
                 <Td className="text-success">{money(saleProfit(s))}</Td>
+              </tr>
+            ))}
+          </Table>
+          <h2 className="mb-3 mt-8 font-display text-lg font-bold">{t("repairs")}: {r.repairs.length}</h2>
+          <Table head={[t("ticket"), t("date"), t("customer"), t("device"), t("agreedPrice"), t("partsCost"), t("profit")]}>
+            {r.repairs.map((x) => (
+              <tr key={x.id}>
+                <Td>{x.number}</Td><Td>{fmtDate(x.deliveredAt!)}</Td><Td>{x.customerName}</Td><Td>{x.device}</Td>
+                <Td className="font-semibold">{money(x.price)}</Td>
+                <Td>{money(x.price - repairProfit(x) - (x.laborCost || 0))}</Td>
+                <Td className="text-success">{money(repairProfit(x))}</Td>
               </tr>
             ))}
           </Table>

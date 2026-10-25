@@ -31,6 +31,16 @@ const ar = {
   thanks: "", selectAll: "تحديد الكل", noProducts: "لا توجد منتجات", stockShort: "مخزون غير كافٍ",
   rent: "إيجار", electricity: "كهرباء", water: "ماء", salaries: "رواتب", internet: "إنترنت", other: "أخرى",
   productsCount: "عدد المنتجات", printReceipt: "طباعة الوصل", lowOnly: "المنخفض فقط", statement: "كشف حساب",
+  repairs: "الصيانة", newRepair: "تذكرة صيانة جديدة", ticket: "التذكرة", device: "الجهاز (الماركة / الموديل)", imei: "IMEI",
+  problem: "وصف العطل", condition: "حالة الجهاز (شاشة مكسورة، بدون شاحن…)", lockCode: "رمز القفل / النمط", agreedPrice: "السعر المتفق عليه",
+  deposit: "العربون", readyDate: "تاريخ الجاهزية المتوقع", laborCost: "تكلفة اليد العاملة", partsCost: "تكلفة القطع", partsUsed: "القطع المستعملة",
+  addPart: "إضافة قطعة", st_received: "مستلم", st_in_repair: "قيد الإصلاح", st_ready: "جاهز", st_delivered: "تم التسليم", st_cancelled: "ملغى",
+  late: "متأخر", lateOnly: "المتأخرة فقط", deliver: "تسليم الجهاز", intakeReceipt: "وصل الاستلام", pickupReceipt: "وصل التسليم",
+  whatsapp: "إشعار واتساب", waMsg: "مرحباً {name}، جهازك {device} (تذكرة {number}) جاهز للاستلام. المبلغ المتبقي: {due}. {shop}",
+  repairTerms: "يرجى إحضار هذا الوصل عند الاستلام. المحل غير مسؤول عن الأجهزة التي لم تُستلم خلال 30 يوماً.",
+  repairIncome: "مداخيل الصيانة", repairProfit: "ربح الصيانة", openRepairs: "أجهزة قيد الصيانة", statusHistory: "سجل الحالة",
+  due: "المستحق", searchRepair: "بحث بالاسم، الهاتف، IMEI أو رقم التذكرة", noRepairs: "لا توجد تذاكر", repairSaved: "تم حفظ التذكرة",
+  back: "رجوع", status: "الحالة", todayRepairIncome: "مداخيل الصيانة اليوم", todayRepairProfit: "ربح الصيانة اليوم",
   backupHelp: "احفظ ملف النسخة على فلاشة أو في مكان آمن أسبوعياً.", importHelp: "الأعمدة: name, barcode, category, brand, purchase, retail, wholesale, stock, min",
 };
 type Dict = typeof ar;
@@ -64,6 +74,16 @@ const fr: Dict = {
   thanks: "", selectAll: "Tout sélectionner", noProducts: "Aucun produit", stockShort: "Stock insuffisant",
   rent: "Loyer", electricity: "Électricité", water: "Eau", salaries: "Salaires", internet: "Internet", other: "Autre",
   productsCount: "Nb de produits", printReceipt: "Imprimer le ticket", lowOnly: "Faible uniquement", statement: "Relevé de compte",
+  repairs: "Réparations", newRepair: "Nouveau ticket", ticket: "Ticket", device: "Appareil (marque / modèle)", imei: "IMEI",
+  problem: "Description de la panne", condition: "État (écran cassé, sans chargeur…)", lockCode: "Code / schéma de verrouillage", agreedPrice: "Prix convenu",
+  deposit: "Acompte", readyDate: "Date prévue", laborCost: "Coût main-d'œuvre", partsCost: "Coût des pièces", partsUsed: "Pièces utilisées",
+  addPart: "Ajouter une pièce", st_received: "Reçu", st_in_repair: "En réparation", st_ready: "Prêt", st_delivered: "Livré", st_cancelled: "Annulé",
+  late: "En retard", lateOnly: "En retard uniquement", deliver: "Livrer l'appareil", intakeReceipt: "Bon de dépôt", pickupReceipt: "Bon de retrait",
+  whatsapp: "Notifier WhatsApp", waMsg: "Bonjour {name}, votre appareil {device} (ticket {number}) est prêt. Reste à payer : {due}. {shop}",
+  repairTerms: "Présentez ce bon au retrait. Le magasin n'est pas responsable des appareils non retirés sous 30 jours.",
+  repairIncome: "Revenus réparations", repairProfit: "Bénéfice réparations", openRepairs: "Appareils en cours", statusHistory: "Historique du statut",
+  due: "Dû", searchRepair: "Rechercher par nom, téléphone, IMEI ou n° ticket", noRepairs: "Aucun ticket", repairSaved: "Ticket enregistré",
+  back: "Retour", status: "Statut", todayRepairIncome: "Réparations du jour", todayRepairProfit: "Bénéfice réparations du jour",
   backupHelp: "Conservez le fichier sur une clé USB chaque semaine.", importHelp: "Colonnes : name, barcode, category, brand, purchase, retail, wholesale, stock, min",
 };
 const dicts = { ar, fr };

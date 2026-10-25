@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { TrendingUp, Coins, Boxes, AlertTriangle, Users } from "lucide-react";
+import { TrendingUp, Coins, Boxes, AlertTriangle, Users, Wrench, Hammer } from "lucide-react";
 import { statsRepo, useData } from "@/data";
 import { useI18n } from "@/lib/i18n";
 import { Card, PageHeader, Stat, Badge } from "@/components/ui-kit";
@@ -31,6 +31,11 @@ function Dashboard() {
         <Stat label={t("stockValue")} value={money(d.stockValue)} icon={<Boxes />} />
         <Stat label={t("lowStock")} value={d.lowStock.length} tone="warning" icon={<AlertTriangle />} />
         <Stat label={t("totalDebts")} value={money(d.debts)} tone="danger" icon={<Users />} />
+      </div>
+      <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        <Stat label={t("todayRepairIncome")} value={money(d.today.repairIncome)} icon={<Wrench />} />
+        <Stat label={t("todayRepairProfit")} value={money(d.today.repairProfit)} tone="success" icon={<Coins />} />
+        <Link to="/repairs"><Stat label={t("openRepairs")} value={d.openRepairs} tone="warning" icon={<Hammer />} /></Link>
       </div>
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <Card>

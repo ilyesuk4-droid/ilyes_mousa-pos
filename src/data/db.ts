@@ -1,6 +1,6 @@
 import Dexie, { type Table } from "dexie";
 import type {
-  Category, Customer, CustomerPayment, Expense, Movement, Product, Purchase, Sale, Settings, Supplier,
+  Category, Customer, CustomerPayment, Expense, Movement, Product, Purchase, RepairTicket, Sale, Settings, Supplier,
 } from "./types";
 
 // Internal to the data layer. UI code must never import this file.
@@ -15,6 +15,7 @@ class PosDB extends Dexie {
   movements!: Table<Movement, number>;
   expenses!: Table<Expense, number>;
   settings!: Table<Settings, string>;
+  repairs!: Table<RepairTicket, number>;
 
   constructor() {
     super("phone-shop-pos");
@@ -30,11 +31,12 @@ class PosDB extends Dexie {
       expenses: "++id,date",
       settings: "key",
     });
+    this.version(2).stores({ repairs: "++id,number,createdAt,status,phone,deliveredAt" });
   }
 }
 
 export const db = new PosDB();
 export const ALL_TABLES = [
   "products", "categories", "customers", "customerPayments", "sales",
-  "suppliers", "purchases", "movements", "expenses", "settings",
+  "suppliers", "purchases", "movements", "expenses", "settings", "repairs",
 ] as const;
