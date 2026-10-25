@@ -1,4 +1,5 @@
 import { db, ALL_TABLES } from "./db";
+import { repairsRepo } from "./repairs";
 import type {
   Category, Customer, Expense, MovementType, PaymentStatus, Product, PurchaseLine, Sale, SaleLine, Settings, Supplier,
 } from "./types";
@@ -172,7 +173,12 @@ export const statsRepo = {
     const profit = sales.reduce((s, x) => s + saleProfit(x), 0);
     const expenseTotal = expenses.reduce((s, x) => s + x.amount, 0);
     const collected = sales.reduce((s, x) => s + x.paid, 0);
-    return { sales, expenses, revenue, profit, expenseTotal, net: profit - expenseTotal, collected };
+    const repairs = await repairsRepo.summary(from, to);
+    return {
+      sales, expenses, revenue, profit, expenseTotal, collected,
+      repairs: repairs.list, repairIncome: repairs.income, repairProfit: repairs.profit,
+      net: profit + repairs.profit - expenseTotal,
+    };
   },
   async dashboard() {
     const start = new Date(); start.setHours(0, 0, 0, 0);
@@ -190,7 +196,8 @@ export const statsRepo = {
       e.qty += l.qty; e.revenue += l.qty * l.unitPrice; map.set(l.productId, e);
     }
     const best = [...map.values()].sort((a, b) => b.qty - a.qty).slice(0, 8);
-    return { today, stockValue, lowStock, debts, best, productCount: products.length };
+    const openRepairs = await repairsRepo.openCount();
+    return { today, stockValue, lowStock, debts, best, productCount: products.length, openRepairs };
   },
 };
 
