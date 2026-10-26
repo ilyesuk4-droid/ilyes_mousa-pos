@@ -2,11 +2,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Link, createRootRouteWithContext, useRouter, HeadContent, Scripts, ClientOnly, type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "@/lib/i18n";
 import { PrintProvider } from "@/components/print";
 import { AppShell } from "@/components/AppShell";
@@ -27,7 +26,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => { reportLovableError(error, { boundary: "tanstack_root_error_component" }); }, [error]);
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
@@ -45,6 +43,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "نقطة البيع — متجر الهواتف" },
+      { name: "author", content: "Ilyes Badreddin" },
       { name: "description", content: "Local-first POS and inventory for phone & accessories shops." },
       { property: "og:title", content: "نقطة البيع — متجر الهواتف" },
       { property: "og:description", content: "Local-first POS and inventory for phone & accessories shops." },

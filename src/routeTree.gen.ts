@@ -14,6 +14,7 @@ import { Route as BackupRouteImport } from './routes/backup'
 import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as CustomersRouteImport } from './routes/customers'
 import { Route as ExpensesRouteImport } from './routes/expenses'
+import { Route as FlexiRouteImport } from './routes/flexi'
 import { Route as LabelsRouteImport } from './routes/labels'
 import { Route as MovementsRouteImport } from './routes/movements'
 import { Route as PosRouteImport } from './routes/pos'
@@ -21,6 +22,7 @@ import { Route as ProductsRouteImport } from './routes/products'
 import { Route as PurchasesRouteImport } from './routes/purchases'
 import { Route as RepairsRouteImport } from './routes/repairs'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as ReturnsRouteImport } from './routes/returns'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RepairsIdRouteImport } from './routes/repairs_.$id'
 
@@ -47,6 +49,11 @@ const CustomersRoute = CustomersRouteImport.update({
 const ExpensesRoute = ExpensesRouteImport.update({
   id: '/expenses',
   path: '/expenses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FlexiRoute = FlexiRouteImport.update({
+  id: '/flexi',
+  path: '/flexi',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LabelsRoute = LabelsRouteImport.update({
@@ -84,6 +91,11 @@ const ReportsRoute = ReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReturnsRoute = ReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -101,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/categories': typeof CategoriesRoute
   '/customers': typeof CustomersRoute
   '/expenses': typeof ExpensesRoute
+  '/flexi': typeof FlexiRoute
   '/labels': typeof LabelsRoute
   '/movements': typeof MovementsRoute
   '/pos': typeof PosRoute
@@ -108,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/purchases': typeof PurchasesRoute
   '/repairs': typeof RepairsRoute
   '/reports': typeof ReportsRoute
+  '/returns': typeof ReturnsRoute
   '/settings': typeof SettingsRoute
   '/repairs/$id': typeof RepairsIdRoute
 }
@@ -117,6 +131,7 @@ export interface FileRoutesByTo {
   '/categories': typeof CategoriesRoute
   '/customers': typeof CustomersRoute
   '/expenses': typeof ExpensesRoute
+  '/flexi': typeof FlexiRoute
   '/labels': typeof LabelsRoute
   '/movements': typeof MovementsRoute
   '/pos': typeof PosRoute
@@ -124,6 +139,7 @@ export interface FileRoutesByTo {
   '/purchases': typeof PurchasesRoute
   '/repairs': typeof RepairsRoute
   '/reports': typeof ReportsRoute
+  '/returns': typeof ReturnsRoute
   '/settings': typeof SettingsRoute
   '/repairs/$id': typeof RepairsIdRoute
 }
@@ -134,6 +150,7 @@ export interface FileRoutesById {
   '/categories': typeof CategoriesRoute
   '/customers': typeof CustomersRoute
   '/expenses': typeof ExpensesRoute
+  '/flexi': typeof FlexiRoute
   '/labels': typeof LabelsRoute
   '/movements': typeof MovementsRoute
   '/pos': typeof PosRoute
@@ -141,6 +158,7 @@ export interface FileRoutesById {
   '/purchases': typeof PurchasesRoute
   '/repairs': typeof RepairsRoute
   '/reports': typeof ReportsRoute
+  '/returns': typeof ReturnsRoute
   '/settings': typeof SettingsRoute
   '/repairs_/$id': typeof RepairsIdRoute
 }
@@ -152,6 +170,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/customers'
     | '/expenses'
+    | '/flexi'
     | '/labels'
     | '/movements'
     | '/pos'
@@ -159,6 +178,7 @@ export interface FileRouteTypes {
     | '/purchases'
     | '/repairs'
     | '/reports'
+    | '/returns'
     | '/settings'
     | '/repairs/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -168,6 +188,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/customers'
     | '/expenses'
+    | '/flexi'
     | '/labels'
     | '/movements'
     | '/pos'
@@ -175,6 +196,7 @@ export interface FileRouteTypes {
     | '/purchases'
     | '/repairs'
     | '/reports'
+    | '/returns'
     | '/settings'
     | '/repairs/$id'
   id:
@@ -184,6 +206,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/customers'
     | '/expenses'
+    | '/flexi'
     | '/labels'
     | '/movements'
     | '/pos'
@@ -191,6 +214,7 @@ export interface FileRouteTypes {
     | '/purchases'
     | '/repairs'
     | '/reports'
+    | '/returns'
     | '/settings'
     | '/repairs_/$id'
   fileRoutesById: FileRoutesById
@@ -201,6 +225,7 @@ export interface RootRouteChildren {
   CategoriesRoute: typeof CategoriesRoute
   CustomersRoute: typeof CustomersRoute
   ExpensesRoute: typeof ExpensesRoute
+  FlexiRoute: typeof FlexiRoute
   LabelsRoute: typeof LabelsRoute
   MovementsRoute: typeof MovementsRoute
   PosRoute: typeof PosRoute
@@ -208,6 +233,7 @@ export interface RootRouteChildren {
   PurchasesRoute: typeof PurchasesRoute
   RepairsRoute: typeof RepairsRoute
   ReportsRoute: typeof ReportsRoute
+  ReturnsRoute: typeof ReturnsRoute
   SettingsRoute: typeof SettingsRoute
   RepairsIdRoute: typeof RepairsIdRoute
 }
@@ -247,6 +273,13 @@ declare module '@tanstack/react-router' {
       path: '/expenses'
       fullPath: '/expenses'
       preLoaderRoute: typeof ExpensesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/flexi': {
+      id: '/flexi'
+      path: '/flexi'
+      fullPath: '/flexi'
+      preLoaderRoute: typeof FlexiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/labels': {
@@ -298,6 +331,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/returns': {
+      id: '/returns'
+      path: '/returns'
+      fullPath: '/returns'
+      preLoaderRoute: typeof ReturnsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -321,6 +361,7 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriesRoute: CategoriesRoute,
   CustomersRoute: CustomersRoute,
   ExpensesRoute: ExpensesRoute,
+  FlexiRoute: FlexiRoute,
   LabelsRoute: LabelsRoute,
   MovementsRoute: MovementsRoute,
   PosRoute: PosRoute,
@@ -328,6 +369,7 @@ const rootRouteChildren: RootRouteChildren = {
   PurchasesRoute: PurchasesRoute,
   RepairsRoute: RepairsRoute,
   ReportsRoute: ReportsRoute,
+  ReturnsRoute: ReturnsRoute,
   SettingsRoute: SettingsRoute,
   RepairsIdRoute: RepairsIdRoute,
 }

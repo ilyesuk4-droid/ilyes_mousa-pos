@@ -8,9 +8,9 @@ export const Route = createFileRoute("/movements")({
   head: () => ({
     meta: [
       { title: "حركة المخزون — نقطة البيع" },
-      { name: "description", content: "Log of every sale, purchase and stock adjustment." },
+      { name: "description", content: "Audit log of all sales, purchases, repairs and returns." },
       { property: "og:title", content: "حركة المخزون — نقطة البيع" },
-      { property: "og:description", content: "Log of every sale, purchase and stock adjustment." },
+      { property: "og:description", content: "Audit log of all sales, purchases, repairs and returns." },
     ],
   }),
   component: Movements,
@@ -19,23 +19,63 @@ export const Route = createFileRoute("/movements")({
 function Movements() {
   const { t, fmtDate } = useI18n();
   const list = useData(() => movementsRepo.list(1000), []) ?? [];
-  const [type, setType] = useState<MovementType | "">(""); const [q, setQ] = useState("");
-  const rows = list.filter((m) => (!type || m.type === type) && m.productName.toLowerCase().includes(q.toLowerCase()));
-  const label = { sale: t("sale"), purchase: t("purchase"), adjust: t("adjust"), repair: t("repairs") };
-  const tone = { sale: "danger", purchase: "success", adjust: "warning", repair: "danger" } as const;
+  const [type, setType] = useState<MovementType | "">("");
+  const [q, setQ] = useState("");
+  const rows = list.filter(
+    (m) => (!type || m.type === type) && m.productName.toLowerCase().includes(q.toLowerCase())
+  );
+
+  const label: Record<MovementType, string> = {
+    sale: t("sale"),
+    purchase: t("purchase"),
+    adjust: t("adjust"),
+    repair: t("repairs"),
+    return: t("returnExchange"),
+  };
+  const tone: Record<MovementType, "danger" | "success" | "warning" | "info"> = {
+    sale: "danger",
+    purchase: "success",
+    adjust: "warning",
+    repair: "danger",
+    return: "info",
+  };
+
   return (
     <>
       <PageHeader title={t("movements")} />
       <div className="mb-4 flex gap-3">
-        <Input className="max-w-sm" placeholder={t("search")} value={q} onChange={(e) => setQ(e.target.value)} />
-        <Select className="max-w-xs" value={type} onChange={(e) => setType(e.target.value as MovementType | "")}>
-          <option value="">{t("all")}</option><option value="sale">{t("sale")}</option><option value="purchase">{t("purchase")}</option><option value="adjust">{t("adjust")}</option><option value="repair">{t("repairs")}</option>
+        <Input
+          className="max-w-sm"
+          placeholder={t("search")}
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+        <Select
+          className="max-w-xs"
+          value={type}
+          onChange={(e) => setType(e.target.value as MovementType | "")}
+        >
+          <option value="">{t("all")}</option>
+          <option value="sale">{t("sale")}</option>
+          <option value="purchase">{t("purchase")}</option>
+          <option value="adjust">{t("adjust")}</option>
+          <option value="repair">{t("repairs")}</option>
+          <option value="return">{t("returnExchange")}</option>
         </Select>
       </div>
       <Table head={[t("date"), t("name"), t("type"), t("qty"), t("note")]}>
         {rows.map((m) => (
-          <tr key={m.id}><Td>{fmtDate(m.date)}</Td><Td className="font-semibold">{m.productName}</Td><Td><Badge tone={tone[m.type]}>{label[m.type]}</Badge></Td>
-            <Td className="font-mono" ><span dir="ltr">{m.qty > 0 ? `+${m.qty}` : m.qty}</span></Td><Td className="text-muted-foreground">{m.note}</Td></tr>
+          <tr key={m.id}>
+            <Td>{fmtDate(m.date)}</Td>
+            <Td className="font-semibold">{m.productName}</Td>
+            <Td>
+              <Badge tone={tone[m.type]}>{label[m.type]}</Badge>
+            </Td>
+            <Td className="font-mono">
+              <span dir="ltr">{m.qty > 0 ? `+${m.qty}` : m.qty}</span>
+            </Td>
+            <Td className="text-muted-foreground">{m.note}</Td>
+          </tr>
         ))}
       </Table>
     </>

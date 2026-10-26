@@ -39,6 +39,11 @@ export function RepairReceipt({ r, settings, kind, qr, money, fmtDate, t }: {
       )}
       <div className="rc-sep" />
       {kind === "intake" ? <div style={{ fontSize: 10 }}>{t("repairTerms")}</div> : <div className="rc-center">{settings.receiptFooter}</div>}
+      {settings.showReceiptCredit && (
+        <div className="rc-center" style={{ fontSize: "9px", opacity: 0.7, marginTop: "4px" }}>
+          {settings.language === "fr" ? "Développé par Ilyes Badreddin" : "تم التطوير بواسطة إلياس بدر الدين"}
+        </div>
+      )}
     </div>
   );
 }

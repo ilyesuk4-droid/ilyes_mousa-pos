@@ -104,6 +104,7 @@ export const salesRepo = {
       };
       sale.id = await db.sales.add(sale);
       for (const l of input.items) {
+        if (l.productId === -1) continue; // flexi sentinel
         const p = await db.products.get(l.productId);
         if (p) await db.products.update(l.productId, { stock: p.stock - l.qty });
         await logMove(l.productId, l.name, "sale", -l.qty, `#${sale.id}`);
@@ -151,7 +152,7 @@ export const expensesRepo = {
 /* ---------------- Settings ---------------- */
 export const DEFAULT_SETTINGS: Settings = {
   key: "main", shopName: "متجر الهواتف", phone: "", address: "", receiptFooter: "شكراً لزيارتكم",
-  paperWidth: 80, language: "ar",
+  paperWidth: 80, language: "ar", hideAmounts: false, darkMode: false, showReceiptCredit: false,
 };
 export const settingsRepo = {
   async get(): Promise<Settings> { return { ...DEFAULT_SETTINGS, ...(await db.settings.get("main")) }; },

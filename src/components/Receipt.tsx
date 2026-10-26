@@ -25,6 +25,11 @@ export function Receipt({ sale, settings, money, fmtDate, t }: { sale: Sale; set
       {sale.remaining > 0 && <div className="rc-row"><span>{tt("remaining")}</span><span>{money(sale.remaining)}</span></div>}
       <div className="rc-sep" />
       <div className="rc-center">{settings.receiptFooter}</div>
+      {settings.showReceiptCredit && (
+        <div className="rc-center" style={{ fontSize: "9px", opacity: 0.7, marginTop: "4px" }}>
+          {settings.language === "fr" ? "Développé par Ilyes Badreddin" : "تم التطوير بواسطة إلياس بدر الدين"}
+        </div>
+      )}
     </div>
   );
 }

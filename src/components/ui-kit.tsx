@@ -1,4 +1,4 @@
-import { useEffect, type ButtonHTMLAttributes, type ComponentProps, type ReactNode, type SelectHTMLAttributes } from "react";
+import { useEffect, type ButtonHTMLAttributes, type ComponentProps, type CSSProperties, type ReactNode, type SelectHTMLAttributes } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,8 +24,8 @@ export function Select({ className, ...p }: SelectHTMLAttributes<HTMLSelectEleme
 export function Field({ label, children, className }: { label: string; children: ReactNode; className?: string }) {
   return <label className={cn("flex flex-col gap-1.5 text-sm font-medium text-muted-foreground", className)}><span>{label}</span>{children}</label>;
 }
-export function Card({ className, children }: { className?: string; children: ReactNode }) {
-  return <div className={cn("rounded-xl border border-border bg-card p-5 shadow-soft", className)}>{children}</div>;
+export function Card({ className, children, style, onClick }: { className?: string; children: ReactNode; style?: CSSProperties; onClick?: () => void }) {
+  return <div style={style} onClick={onClick} className={cn("rounded-xl border border-border bg-card p-5 shadow-soft", className)}>{children}</div>;
 }
 export function PageHeader({ title, children }: { title: string; children?: ReactNode }) {
   return <div className="mb-6 flex flex-wrap items-center justify-between gap-3"><h1 className="font-display text-2xl font-bold">{title}</h1><div className="flex flex-wrap gap-2">{children}</div></div>;
@@ -66,7 +66,7 @@ export function Table({ head, children }: { head: ReactNode[]; children: ReactNo
     </div>
   );
 }
-export const Td = ({ children, className }: { children?: ReactNode; className?: string }) => <td className={cn("px-3 py-2.5", className)}>{children}</td>;
+export const Td = ({ children, className, colSpan }: { children?: ReactNode; className?: string; colSpan?: number }) => <td colSpan={colSpan} className={cn("px-3 py-2.5", className)}>{children}</td>;
 export function Badge({ children, tone = "default" }: { children: ReactNode; tone?: "default" | "success" | "warning" | "danger" | "info" }) {
   const c = { default: "bg-muted text-foreground", info: "bg-primary/15 text-primary", success: "bg-success/15 text-success", warning: "bg-warning/25 text-warning-foreground", danger: "bg-destructive/10 text-destructive" }[tone];
   return <span className={cn("inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold", c)}>{children}</span>;

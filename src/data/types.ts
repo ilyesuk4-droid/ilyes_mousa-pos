@@ -42,7 +42,7 @@ export interface Sale {
 export interface Supplier { id?: number | undefined; name: string; phone: string }
 export interface PurchaseLine { productId: number; name: string; qty: number; purchasePrice: number }
 export interface Purchase { id?: number | undefined; date: number; supplierId?: number | undefined; supplierName?: string | undefined; items: PurchaseLine[]; total: number }
-export type MovementType = "sale" | "purchase" | "adjust" | "repair";
+export type MovementType = "sale" | "purchase" | "adjust" | "repair" | "return";
 export interface Movement { id?: number | undefined; date: number; productId: number; productName: string; type: MovementType; qty: number; note: string }
 export interface Expense { id?: number | undefined; date: number; category: string; amount: number; note: string }
 export interface Settings {
@@ -55,6 +55,10 @@ export interface Settings {
   paperWidth: 58 | 80;
   language: "ar" | "fr";
   lastBackup?: number | undefined;
+  wizardCompleted?: boolean | undefined;
+  hideAmounts?: boolean | undefined;
+  darkMode?: boolean | undefined;
+  showReceiptCredit?: boolean | undefined;
 }
 
 export type RepairStatus = "received" | "in_repair" | "ready" | "delivered" | "cancelled";
@@ -81,4 +85,73 @@ export interface RepairTicket {
   remaining: number;
   deliveredAt?: number | undefined;
   customerId?: number | undefined;
+}
+
+// ─── Flexi / Mobile Top-up ───────────────────────────────────────────────────
+export interface FlexiOperator {
+  id?: number | undefined;
+  name: string;          // e.g. "Mobilis"
+  color: string;         // hex color e.g. "#16a34a"
+  balance: number;       // current balance in DZD
+  lowBalanceAlert: number; // alert when below this amount
+  marginPct: number;     // sale margin % (e.g. 2 means +2% on top of amount)
+}
+export interface FlexiRecharge {
+  id?: number | undefined;
+  operatorId: number;
+  date: number;
+  loaded: number;        // amount of credit loaded (face value)
+  cost: number;          // actual amount paid
+  note: string;
+}
+export type FlexiPaymentMode = "paid" | "partial" | "credit";
+export interface FlexiSale {
+  id?: number | undefined;
+  operatorId: number;
+  operatorName: string;
+  date: number;
+  phoneNumber: string;
+  amount: number;        // face value sent
+  salePrice: number;     // what customer paid (amount + margin)
+  profit: number;        // salePrice - amount (we count the face value cost)
+  paymentMode: FlexiPaymentMode;
+  paidAmount: number;
+  remaining: number;
+  customerId?: number | undefined;
+  customerName?: string | undefined;
+}
+
+// ─── Returns & Exchanges (المرتجعات والتبديل) ──────────────────────────────────
+export type ReturnAction = "refund_cash" | "deduct_debt" | "exchange";
+
+export interface ReturnLine {
+  productId: number;
+  name: string;
+  qty: number;
+  unitPrice: number;        // refund price per unit
+  purchasePrice: number;    // cost
+  reason: string;           // reason e.g. "عيب مصنعي", "موديل غير مناسب", "طلب الزبون"
+}
+
+export interface ExchangeLine {
+  productId: number;
+  name: string;
+  qty: number;
+  unitPrice: number;
+  purchasePrice: number;
+}
+
+export interface SaleReturn {
+  id?: number | undefined;
+  date: number;
+  saleId?: number | undefined;          // optional linked sale receipt id
+  items: ReturnLine[];
+  totalRefund: number;                 // total refund value of returned items
+  action: ReturnAction;
+  exchangeItems?: ExchangeLine[] | undefined; // if exchanged for new items
+  exchangeTotal?: number | undefined;         // total price of exchange items
+  netDiff?: number | undefined;               // exchangeTotal - totalRefund (positive: customer pays, negative: shop refunds)
+  customerId?: number | undefined;
+  customerName?: string | undefined;
+  notes?: string | undefined;
 }
