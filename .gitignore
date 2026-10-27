@@ -12,7 +12,11 @@ dist
 dist-ssr
 dist-electron
 release
+delivery
+*.zip
+*.exe
 .output
+.github/
 .vinxi
 .tanstack/**
 .nitro

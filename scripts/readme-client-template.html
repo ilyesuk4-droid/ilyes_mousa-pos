@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>دليل استخدام برنامج إدارة محلات الهواتف - Mobile Shop Manager</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm 16mm 18mm 16mm;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+      background-color: #ffffff;
+      color: #1e293b;
+      line-height: 1.6;
+      font-size: 13px;
+      direction: rtl;
+    }
+
+    .header {
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-titles h1 {
+      font-size: 22px;
+      color: #1e3a8a;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .header-titles p {
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .badge {
+      background: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .section {
+      margin-bottom: 18px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      page-break-inside: avoid;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: #2563eb;
+      color: #ffffff;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .alert-box {
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-size: 12.5px;
+    }
+
+    .alert-warning {
+      background-color: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+    }
+
+    .alert-danger {
+      background-color: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    .alert-success {
+      background-color: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    ul, ol {
+      padding-right: 22px;
+      margin: 8px 0;
+    }
+
+    li {
+      margin-bottom: 6px;
+      color: #334155;
+    }
+
+    li strong {
+      color: #0f172a;
+    }
+
+    .key-badge {
+      display: inline-block;
+      background: #e2e8f0;
+      border: 1px solid #cbd5e1;
+      padding: 1px 7px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #1e293b;
+      direction: ltr;
+    }
+
+    .footer {
+      margin-top: 24px;
+      padding-top: 14px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #64748b;
+      page-break-inside: avoid;
+    }
+
+    .footer a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+      direction: ltr;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-titles">
+      <h1>دليل تشغيل برنامج إدارة محلات الهواتف</h1>
+      <p>Mobile Shop Manager — دليل مبسط وشامل لصاحب المتجر (الإصدار 1.0.0)</p>
+    </div>
+    <div class="badge">Windows x64</div>
+  </div>
+
+  <!-- 1. التثبيت والتشغيل -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">1</span>
+      <span>طريقة التثبيت والتشغيل</span>
+    </div>
+    <p>يتوفر البرنامج في حزمتين لتناسب احتياجك وسهولة استخدامك:</p>
+    <ul>
+      <li><strong>برنامج التثبيت الرسمي (موصى به):</strong> قم بتشغيل الملف <span class="key-badge">MobileShopManager-Setup-1.0.0.exe</span>، واتبع خطوات التثبيت البسيطة. سيقوم بإنشاء اختصار مباشر على سطح المكتب وفي قائمة ابدأ.</li>
+      <li><strong>النسخة المحمولة (Portable):</strong> الملف <span class="key-badge">MobileShopManager-Portable-1.0.0.exe</span> يعمل مباشرة بنقرة واحدة دون الحاجة لتثبيت مسبق، ويمكنك تشغيله من أي مجلد أو من فلاش ديسك.</li>
+    </ul>
+  </div>
+
+  <!-- 2. تخطي تحذير Windows SmartScreen -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">2</span>
+      <span>تخطي نافذة الحماية Windows SmartScreen</span>
+    </div>
+    <p>عند تشغيل البرنامج لأول مرة على نظام ويندوز، قد تظهر نافذة زرقاء تحمل العنوان <em>"Windows protected your PC"</em> أو <em>"حماية جهاز الكمبيوتر"</em>:</p>
+    <div class="alert-box alert-warning">
+      <strong>⚠️ هذا التنبيه طبيعي جداً:</strong> يظهر التنبيه تلقائياً لأي برنامج جديد غير مدمج بشهادة مدفوعة من مايكروسوفت، والبرنامج آمن ومفحوص بالكامل.
+    </div>
+    <p><strong>خطوات التخطي بسهولة (مرة واحدة فقط):</strong></p>
+    <ol>
+      <li>اضغط على النص الصغير: <strong>"More info"</strong> (أو <strong>"مزيد من المعلومات"</strong>).</li>
+      <li>سيظهر لك زر جديد في الأسفل باسم: <strong>"Run anyway"</strong> (أو <strong>"تشغيل على أي حال"</strong>)، اضغط عليه ليبدأ البرنامج فوراً.</li>
+    </ol>
+  </div>
+
+  <!-- 3. معالج الإعداد الأولي -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">3</span>
+      <span>معالج الإعداد الأولي (الضبط السريع)</span>
+    </div>
+    <p>عند فتح البرنامج لأول مرة، تظهر لك نافذة إعداد سهلة لضبط متجرك:</p>
+    <ul>
+      <li><strong>بيانات المتجر:</strong> اكتب اسم محلك، رقم الهاتف، والعنوان التجاري.</li>
+      <li><strong>العملة وشعار المتجر:</strong> تم ضبط العملة افتراضياً على الدينار الجزائري (د.ج)، ويمكنك إضافة صورة لوجو المحل لتظهر في أعلى الفواتير وتقارير الصيانة.</li>
+      <li>اضغط على <strong>"حفظ وبدء العمل"</strong> للدخول إلى لوحة التحكم والبدء فوراً.</li>
+    </ul>
+  </div>
+
+  <!-- 4. النسخ الاحتياطي والاسترجاع -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">4</span>
+      <span>النسخ الاحتياطي واسترجاع البيانات (أمان عملك)</span>
+    </div>
+    <p>لحماية حساباتك، مبيعاتك، وسجلات الصيانة والفليكسي:</p>
+    <ul>
+      <li><strong>أخذ نسخة احتياطية يدوية:</strong> من القائمة الجانبية اختر <strong>"النسخ الاحتياطي"</strong> (أو اضغط على زر النسخ الفوري في الشريط العلوي)، ثم اضغط <strong>"تصدير نسخة احتياطية"</strong>. سيتم حفظ ملف <span class="key-badge">.json</span> يحتوي على كافة بيانات المتجر.</li>
+      <li><strong>استرجاع البيانات:</strong> في حالة نقل البرنامج لجهاز آخر أو استعادة بيانات سابقة، ادخل لصفحة النسخ الاحتياطي، اضغط <strong>"استرجاع نسخة احتياطية"</strong> واختر الملف. يقوم البرنامج بعمل نسخة أمان تلقائية قبل الاسترجاع حمايةً لسجلاتك.</li>
+    </ul>
+  </div>
+
+  <!-- 5. تحذير عدم مسح المجلد والتذكير الأسبوعي -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">5</span>
+      <span>تنبيهات هامة جداً لأمان بياناتك</span>
+    </div>
+    <div class="alert-box alert-danger">
+      <strong>⛔ تحذير قطعي — عدم حذف بيانات البرنامج:</strong> تُخزّن قاعدة بيانات البرنامج محلياً بأمان على حاسوبك (داخل مجلد المستخدم AppData). لا تقم أبداً بمسح هذا المجلد أو تشغيل برامج تنظيف عشوائية تمسح ملفات التطبيقات المخزنة.
+    </div>
+    <div class="alert-box alert-success">
+      <strong>💡 التذكير الذهبي (فلاش ديسك أسبوعي):</strong> احتفظ بنسخة احتياطية من ملف النسخ الأسبوعي على <strong>فلاش ديسك خارجي (USB)</strong> بعيداً عن الحاسوب. في حال حدوث أي عطل مفاجئ في الويندوز أو القرص الصلب، يمكنك استرجاع كافة مبيعاتك وأموالك في دقائق معدودة!
+    </div>
+  </div>
+
+  <!-- Footer & Contact -->
+  <div class="footer">
+    <div>
+      <strong>تطوير وإشراف هندسي:</strong> إلياس بدر الدين (Ilyes Badreddin)
+    </div>
+    <div>
+      <strong>للتواصل والدعم الفني:</strong> 
+      <a href="https://ilyas-portfolio.carrd.co/">https://ilyas-portfolio.carrd.co/</a>
+    </div>
+  </div>
+
+</body>
+</html>
