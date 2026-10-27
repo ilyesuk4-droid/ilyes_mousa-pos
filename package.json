@@ -1,6 +1,6 @@
 {
   "name": "mobile-shop-manager",
-  "productName": "متجر الهواتف — نقطة البيع",
+  "productName": "MobileShopManager",
   "version": "1.0.0",
   "main": "electron/main.cjs",
   "private": true,
@@ -108,7 +108,7 @@
   },
   "build": {
     "appId": "com.ilyes.mobileshopmanager",
-    "productName": "متجر الهواتف — نقطة البيع",
+    "productName": "MobileShopManager",
     "directories": {
       "output": "release",
       "buildResources": "build"

@@ -361,7 +361,8 @@ function createWindow() {
     minHeight: 680,
     title: "متجر الهواتف — نقطة البيع",
     icon: actualIcon,
-    show: false,
+    show: true,
+    backgroundColor: "#ffffff",
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
       nodeIntegration: false,
@@ -373,9 +374,12 @@ function createWindow() {
 
   createMenu(isDev);
   mainWindow.maximize();
+  mainWindow.show();
+  mainWindow.focus();
 
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
+    mainWindow.focus();
   });
 
   // Disable DevTools and refresh shortcuts in production
@@ -454,7 +458,10 @@ function createWindow() {
 app.on("second-instance", () => {
   if (mainWindow) {
     if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.show();
+    mainWindow.setAlwaysOnTop(true);
     mainWindow.focus();
+    mainWindow.setAlwaysOnTop(false);
   }
 });
 
@@ -473,5 +480,8 @@ app.whenReady().then(() => {
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
+    setTimeout(() => {
+      process.exit(0);
+    }, 500);
   }
 });
