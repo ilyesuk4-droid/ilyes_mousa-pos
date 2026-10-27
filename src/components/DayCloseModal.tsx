@@ -26,6 +26,7 @@ export function DayCloseModal({ open, onClose, data, shopName }: DayCloseModalPr
   }).format(new Date(data.date));
 
   function handleCopyWhatsApp() {
+    if (!data) return;
     const isAr = lang === "ar";
     const title = isAr ? `📊 *تقرير إغلاق صندوق اليوم — ${shopName}*` : `📊 *Rapport de clôture de caisse — ${shopName}*`;
     const dateLine = isAr ? `📅 *التاريخ:* ${dateStr}` : `📅 *Date:* ${dateStr}`;
@@ -87,7 +88,7 @@ export function DayCloseModal({ open, onClose, data, shopName }: DayCloseModalPr
             <h3 className="font-display text-lg font-bold text-foreground">{shopName}</h3>
             <p className="text-xs text-muted-foreground">{dateStr}</p>
           </div>
-          <Badge tone="success" className="text-xs px-3 py-1">
+          <Badge tone="success">
             {data.salesCount + data.repairsDeliveredCount + data.flexiCount} {t("todayOperations")}
           </Badge>
         </div>
@@ -162,7 +163,7 @@ export function DayCloseModal({ open, onClose, data, shopName }: DayCloseModalPr
         {/* Operations summary chips */}
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 text-center text-xs">
           <div className="rounded-lg bg-muted/50 p-2.5">
-            <div className="text-muted-foreground">{t("sales")}</div>
+            <div className="text-muted-foreground">{t("salesGroup")}</div>
             <div className="mt-1 font-bold text-sm tabular-nums text-foreground">{data.salesCount}</div>
           </div>
           <div className="rounded-lg bg-muted/50 p-2.5">

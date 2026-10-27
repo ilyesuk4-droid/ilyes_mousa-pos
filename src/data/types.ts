@@ -59,6 +59,10 @@ export interface Settings {
   hideAmounts?: boolean | undefined;
   darkMode?: boolean | undefined;
   showReceiptCredit?: boolean | undefined;
+  silentPrint?: boolean | undefined;
+  printerName?: string | undefined;
+  autoLaunch?: boolean | undefined;
+  backupFolder?: string | undefined;
 }
 
 export type RepairStatus = "received" | "in_repair" | "ready" | "delivered" | "cancelled";

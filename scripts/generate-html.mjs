@@ -16,9 +16,21 @@ async function generateHtml() {
   }
 
   const html = await res.text();
-  const outPath = path.resolve("dist/client/index.html");
+  const clientDir = path.resolve("dist/client");
+  if (!fs.existsSync(clientDir)) {
+    fs.mkdirSync(clientDir, { recursive: true });
+  }
+
+  const outPath = path.join(clientDir, "index.html");
   fs.writeFileSync(outPath, html, "utf-8");
   console.log(`Generated ${outPath} (${html.length} bytes) successfully!`);
+
+  // Ensure all public files (including offline fonts) are copied to dist/client
+  const publicDir = path.resolve("public");
+  if (fs.existsSync(publicDir)) {
+    fs.cpSync(publicDir, clientDir, { recursive: true });
+    console.log("Ensured all public assets copied to dist/client/");
+  }
 }
 
 generateHtml().catch((err) => {

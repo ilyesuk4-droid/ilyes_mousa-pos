@@ -8,10 +8,20 @@ export function PrintProvider({ children }: { children: ReactNode }) {
   const settings = useData(() => settingsRepo.get(), []);
   const [job, setJob] = useState<{ node: ReactNode; mode: Mode } | null>(null);
   const paper = settings?.paperWidth === 58 ? "58mm" : "80mm";
-  const print = useCallback((node: ReactNode, mode: Mode = "receipt") => {
-    setJob({ node, mode });
-    setTimeout(() => window.print(), 350);
-  }, []);
+  const print = useCallback(
+    (node: ReactNode, mode: Mode = "receipt") => {
+      setJob({ node, mode });
+      setTimeout(() => {
+        const electronAPI = typeof window !== "undefined" ? window.electronAPI : undefined;
+        if (electronAPI?.printSilent && settings?.silentPrint) {
+          electronAPI.printSilent({ deviceName: settings?.printerName });
+        } else {
+          window.print();
+        }
+      }, 350);
+    },
+    [settings?.silentPrint, settings?.printerName]
+  );
   const isReceipt = job?.mode !== "a4";
   return (
     <Ctx.Provider value={print}>

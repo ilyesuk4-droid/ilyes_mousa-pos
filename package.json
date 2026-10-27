@@ -1,6 +1,8 @@
 {
   "name": "mobile-shop-manager",
+  "productName": "متجر الهواتف — نقطة البيع",
   "version": "1.0.0",
+  "main": "electron/main.cjs",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -9,6 +11,9 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
+    "electron:dev": "vite build && node scripts/generate-html.mjs && electron .",
+    "electron:build": "vite build && node scripts/generate-html.mjs && electron-builder --win",
+    "electron:build:portable": "vite build && node scripts/generate-html.mjs && electron-builder --win portable",
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
@@ -100,5 +105,51 @@
     "typescript-eslint": "^8.56.1",
     "vite": "8.1.5",
     "vitest": "^4.1.10"
+  },
+  "build": {
+    "appId": "com.ilyes.mobileshopmanager",
+    "productName": "متجر الهواتف — نقطة البيع",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "dist/client/**/*",
+      "build/**/*",
+      "public/favicon.ico",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "متجر الهواتف",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "MobileShopManager-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "MobileShopManager-Portable-${version}.${ext}"
+    }
   }
 }

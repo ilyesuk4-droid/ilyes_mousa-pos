@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Sparkles, Trash2, Wand2, Info, ExternalLink, Instagram } from "lucide-react";
+import {
+  Sparkles, Trash2, Wand2, Info, ExternalLink, Instagram,
+  Printer, HardDrive, FolderOpen, Monitor, RefreshCw
+} from "lucide-react";
 import { toast } from "sonner";
 import pkg from "../../package.json";
-import { demoRepo, settingsRepo, useData, type Settings } from "@/data";
+import { backupRepo, demoRepo, settingsRepo, useData, type Settings } from "@/data";
 import { useI18n } from "@/lib/i18n";
 import { Button, Card, Field, Input, PageHeader, Select, readFileAsDataURL, Badge } from "@/components/ui-kit";
 import { SetupWizard } from "@/components/SetupWizard";
@@ -21,17 +24,40 @@ export const Route = createFileRoute("/settings")({
 });
 
 function SettingsPage() {
-  const { t, lang } = useI18n();
+  const { t, lang, fmtDate } = useI18n();
   const loaded = useData(() => settingsRepo.get(), []);
   const [s, setS] = useState<Settings | null>(null);
   const [hasDemo, setHasDemo] = useState(false);
   const [wizardOpen, setWizardOpen] = useState(false);
   const [loadingDemo, setLoadingDemo] = useState(false);
 
+  // Desktop / Electron integration state
+  const isElectron = typeof window !== "undefined" && !!window.electronAPI?.isElectron;
+  const [printers, setPrinters] = useState<{ name: string; displayName?: string; isDefault?: boolean }[]>([]);
+  const [backupInfo, setBackupInfo] = useState<{ folder: string; files: string[] } | null>(null);
+  const [autoLaunch, setAutoLaunch] = useState(false);
+  const [testingPrint, setTestingPrint] = useState(false);
+  const [backingUp, setBackingUp] = useState(false);
+
   useEffect(() => {
-    if (loaded && !s) setS(loaded);
+    if (loaded && !s) {
+      setS(loaded);
+      if (loaded.autoLaunch !== undefined) {
+        setAutoLaunch(loaded.autoLaunch);
+      }
+    }
     setHasDemo(demoRepo.hasDemoData());
   }, [loaded, s]);
+
+  useEffect(() => {
+    if (isElectron && window.electronAPI) {
+      window.electronAPI.getPrinters().then(setPrinters).catch(() => {});
+      window.electronAPI.getBackupInfo().then(setBackupInfo).catch(() => {});
+      if (window.electronAPI.getAutoLaunch) {
+        window.electronAPI.getAutoLaunch().then(setAutoLaunch).catch(() => {});
+      }
+    }
+  }, [isElectron]);
 
   if (!s) return null;
   const set = <K extends keyof Settings>(k: K, v: Settings[K]) => setS({ ...s, [k]: v });
@@ -63,115 +89,357 @@ function SettingsPage() {
     }
   }
 
+  async function handlePrintTestPage() {
+    if (!window.electronAPI?.printTestPage || !s) return;
+    setTestingPrint(true);
+    try {
+      const res = await window.electronAPI.printTestPage({
+        deviceName: s.printerName || "",
+        silent: !!s.silentPrint,
+      });
+      if (res.success) {
+        toast.success(t("testPageSuccess"));
+      } else {
+        toast.error(t("testPageError") + (res.error ? `: ${res.error}` : ""));
+      }
+    } catch {
+      toast.error(t("testPageError"));
+    } finally {
+      setTestingPrint(false);
+    }
+  }
+
+  async function handleBackupNow() {
+    if (!window.electronAPI?.backupNow) return;
+    setBackingUp(true);
+    try {
+      const data = await backupRepo.exportAll();
+      const res = await window.electronAPI.backupNow(JSON.stringify(data));
+      if (res.success) {
+        toast.success(t("backupSuccess"));
+        const info = await window.electronAPI.getBackupInfo();
+        setBackupInfo(info);
+      } else {
+        toast.error("فشل النسخ: " + (res.error || ""));
+      }
+    } catch {
+      toast.error("حدث خطأ أثناء النسخ");
+    } finally {
+      setBackingUp(false);
+    }
+  }
+
+  async function handleChooseBackupFolder() {
+    if (!window.electronAPI?.chooseBackupFolder) return;
+    try {
+      const chosen = await window.electronAPI.chooseBackupFolder();
+      if (chosen) {
+        const info = await window.electronAPI.getBackupInfo();
+        setBackupInfo(info);
+        toast.success(t("saved"));
+      }
+    } catch {
+      toast.error("تعذر تغيير المجلد");
+    }
+  }
+
+  async function handleOpenBackupFolder() {
+    if (window.electronAPI?.openBackupFolder) {
+      await window.electronAPI.openBackupFolder();
+    } else if (window.electronAPI?.openDataFolder) {
+      await window.electronAPI.openDataFolder();
+    }
+  }
+
+  async function handleToggleAutoLaunch(enabled: boolean) {
+    setAutoLaunch(enabled);
+    set("autoLaunch", enabled);
+    if (window.electronAPI?.setAutoLaunch) {
+      const res = await window.electronAPI.setAutoLaunch(enabled);
+      setAutoLaunch(res);
+      if (s) {
+        await settingsRepo.save({ ...s, autoLaunch: res });
+      }
+      toast.success(enabled ? "تم تفعيل بدء التشغيل التلقائي مع ويندوز" : "تم إلغاء بدء التشغيل مع ويندوز");
+    }
+  }
+
   return (
     <>
       <PageHeader title={t("settings")} />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
-        {/* Main Settings Form */}
-        <Card>
-          <form
-            className="grid grid-cols-2 gap-4"
-            onSubmit={async (e) => {
-              e.preventDefault();
-              await settingsRepo.save(s);
-              toast.success(t("saved"));
-            }}
-          >
-            <Field label={t("shopName")} className="col-span-2">
-              <Input
-                value={s.shopName}
-                onChange={(e) => set("shopName", e.target.value)}
-              />
-            </Field>
-            <Field label={t("phone")}>
-              <Input
-                value={s.phone}
-                onChange={(e) => set("phone", e.target.value)}
-              />
-            </Field>
-            <Field label={t("address")}>
-              <Input
-                value={s.address}
-                onChange={(e) => set("address", e.target.value)}
-              />
-            </Field>
-            <Field label={t("receiptFooter")} className="col-span-2">
-              <Input
-                value={s.receiptFooter}
-                onChange={(e) => set("receiptFooter", e.target.value)}
-              />
-            </Field>
-            <Field label={t("paperWidth")}>
-              <Select
-                value={s.paperWidth}
-                onChange={(e) => set("paperWidth", Number(e.target.value) as 58 | 80)}
-              >
-                <option value={80}>80mm</option>
-                <option value={58}>58mm</option>
-              </Select>
-            </Field>
-            <Field label={t("language")}>
-              <Select
-                value={s.language}
-                onChange={(e) => set("language", e.target.value as "ar" | "fr")}
-              >
-                <option value="ar">العربية</option>
-                <option value="fr">Français</option>
-              </Select>
-            </Field>
-
-            <Field label={t("logo")} className="col-span-2">
-              <div className="flex items-center gap-3">
-                {s.logo && (
-                  <img
-                    src={s.logo}
-                    alt=""
-                    className="h-16 w-16 rounded-xl object-contain shadow-xs border border-border"
-                  />
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={async (e) => {
-                    const f = e.target.files?.[0];
-                    if (f) set("logo", await readFileAsDataURL(f, 300));
-                  }}
+        {/* Main Column: Main Settings Form + Desktop App Settings */}
+        <div className="space-y-6">
+          <Card>
+            <form
+              className="grid grid-cols-2 gap-4"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                await settingsRepo.save(s);
+                toast.success(t("saved"));
+              }}
+            >
+              <Field label={t("shopName")} className="col-span-2">
+                <Input
+                  value={s.shopName}
+                  onChange={(e) => set("shopName", e.target.value)}
                 />
-                {s.logo && (
+              </Field>
+              <Field label={t("phone")}>
+                <Input
+                  value={s.phone}
+                  onChange={(e) => set("phone", e.target.value)}
+                />
+              </Field>
+              <Field label={t("address")}>
+                <Input
+                  value={s.address}
+                  onChange={(e) => set("address", e.target.value)}
+                />
+              </Field>
+              <Field label={t("receiptFooter")} className="col-span-2">
+                <Input
+                  value={s.receiptFooter}
+                  onChange={(e) => set("receiptFooter", e.target.value)}
+                />
+              </Field>
+              <Field label={t("paperWidth")}>
+                <Select
+                  value={s.paperWidth}
+                  onChange={(e) => set("paperWidth", Number(e.target.value) as 58 | 80)}
+                >
+                  <option value={80}>80mm</option>
+                  <option value={58}>58mm</option>
+                </Select>
+              </Field>
+              <Field label={t("language")}>
+                <Select
+                  value={s.language}
+                  onChange={(e) => set("language", e.target.value as "ar" | "fr")}
+                >
+                  <option value="ar">العربية</option>
+                  <option value="fr">Français</option>
+                </Select>
+              </Field>
+
+              <Field label={t("logo")} className="col-span-2">
+                <div className="flex items-center gap-3">
+                  {s.logo && (
+                    <img
+                      src={s.logo}
+                      alt=""
+                      className="h-16 w-16 rounded-xl object-contain shadow-xs border border-border"
+                    />
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const f = e.target.files?.[0];
+                      if (f) set("logo", await readFileAsDataURL(f, 300));
+                    }}
+                  />
+                  {s.logo && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => set("logo", undefined)}
+                    >
+                      {t("delete")}
+                    </Button>
+                  )}
+                </div>
+              </Field>
+
+              {/* Receipt credit setting toggle */}
+              <div className="col-span-2 flex items-center gap-3 pt-2 border-t border-border/60">
+                <input
+                  type="checkbox"
+                  id="showReceiptCredit"
+                  checked={!!s.showReceiptCredit}
+                  onChange={(e) => set("showReceiptCredit", e.target.checked)}
+                  className="h-4 w-4 rounded border-border text-primary focus:ring-ring cursor-pointer"
+                />
+                <label htmlFor="showReceiptCredit" className="text-sm font-medium text-foreground cursor-pointer select-none">
+                  {t("showReceiptCreditSetting")}
+                </label>
+              </div>
+
+              <div className="col-span-2 pt-2">
+                <Button type="submit" size="lg" className="w-full sm:w-auto">
+                  {t("save")}
+                </Button>
+              </div>
+            </form>
+          </Card>
+
+          {/* Electron / Desktop Features Card (Only in Electron desktop app) */}
+          {isElectron && (
+            <Card className="space-y-5 border-primary/30 shadow-sm">
+              <div className="flex items-center justify-between border-b border-border/70 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary/10 text-primary">
+                    <Monitor className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h2 className="font-display text-base font-bold text-foreground">
+                      {t("desktopSettings")}
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
+                      {t("desktopSettingsDesc")}
+                    </p>
+                  </div>
+                </div>
+                <Badge tone="info">Windows</Badge>
+              </div>
+
+              {/* Printing settings section */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <Printer className="h-4 w-4 text-primary" />
+                  <span>{t("print")}</span>
+                </h3>
+
+                <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-muted/20 p-3">
+                  <input
+                    type="checkbox"
+                    id="silentPrintToggle"
+                    checked={!!s.silentPrint}
+                    onChange={async (e) => {
+                      const val = e.target.checked;
+                      set("silentPrint", val);
+                      await settingsRepo.save({ ...s, silentPrint: val });
+                      toast.success(t("saved"));
+                    }}
+                    className="h-4 w-4 rounded border-border text-primary focus:ring-ring cursor-pointer"
+                  />
+                  <div>
+                    <label htmlFor="silentPrintToggle" className="text-sm font-semibold text-foreground cursor-pointer block">
+                      {t("silentPrintToggle")}
+                    </label>
+                    <span className="text-xs text-muted-foreground">
+                      {t("silentPrintSetting")}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2 items-end">
+                  <Field label={t("choosePrinter")}>
+                    <Select
+                      value={s.printerName || ""}
+                      onChange={async (e) => {
+                        const val = e.target.value;
+                        set("printerName", val);
+                        await settingsRepo.save({ ...s, printerName: val });
+                        toast.success(t("saved"));
+                      }}
+                    >
+                      <option value="">{t("defaultPrinter")}</option>
+                      {printers.map((p) => (
+                        <option key={p.name} value={p.name}>
+                          {p.displayName || p.name} {p.isDefault ? "(افتراضية)" : ""}
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
+
                   <Button
                     type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => set("logo", undefined)}
+                    variant="outline"
+                    disabled={testingPrint}
+                    onClick={handlePrintTestPage}
+                    className="h-10"
                   >
-                    {t("delete")}
+                    <Printer className="h-4 w-4" />
+                    <span>{testingPrint ? t("testPagePrinting") : t("printTestPage")}</span>
                   </Button>
-                )}
+                </div>
               </div>
-            </Field>
 
-            {/* Receipt credit setting toggle */}
-            <div className="col-span-2 flex items-center gap-3 pt-2 border-t border-border/60">
-              <input
-                type="checkbox"
-                id="showReceiptCredit"
-                checked={!!s.showReceiptCredit}
-                onChange={(e) => set("showReceiptCredit", e.target.checked)}
-                className="h-4 w-4 rounded border-border text-primary focus:ring-ring cursor-pointer"
-              />
-              <label htmlFor="showReceiptCredit" className="text-sm font-medium text-foreground cursor-pointer select-none">
-                {t("showReceiptCreditSetting")}
-              </label>
-            </div>
+              {/* Windows Auto-Launch section */}
+              <div className="pt-2 border-t border-border/60">
+                <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-muted/20 p-3">
+                  <input
+                    type="checkbox"
+                    id="autoLaunchCheckbox"
+                    checked={autoLaunch}
+                    onChange={(e) => void handleToggleAutoLaunch(e.target.checked)}
+                    className="h-4 w-4 rounded border-border text-primary focus:ring-ring cursor-pointer"
+                  />
+                  <div>
+                    <label htmlFor="autoLaunchCheckbox" className="text-sm font-semibold text-foreground cursor-pointer block">
+                      {t("startWithWindows")}
+                    </label>
+                    <span className="text-xs text-muted-foreground">
+                      {t("startWithWindowsDesc")}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-            <div className="col-span-2 pt-2">
-              <Button type="submit" size="lg" className="w-full sm:w-auto">
-                {t("save")}
-              </Button>
-            </div>
-          </form>
-        </Card>
+              {/* Local Auto-Backup section */}
+              <div className="space-y-3 pt-2 border-t border-border/60">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                    <HardDrive className="h-4 w-4 text-primary" />
+                    <span>{t("desktopBackup")}</span>
+                  </h3>
+                  {backupInfo && (
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {t("backupCount")}: {backupInfo.files.length}
+                    </span>
+                  )}
+                </div>
+
+                <div className="rounded-xl border border-border/60 bg-muted/20 p-3 text-xs space-y-1.5">
+                  <div className="text-muted-foreground">{t("backupFolder")}:</div>
+                  <div className="font-mono text-foreground font-semibold break-all bg-background/80 p-2 rounded-lg border border-border/60">
+                    {backupInfo?.folder || "C:\\Users\\...\\Documents\\MobileShopBackups"}
+                  </div>
+                  {s.lastBackup && (
+                    <div className="text-muted-foreground pt-1">
+                      {t("lastBackup")}: <span className="font-semibold text-foreground">{fmtDate(s.lastBackup)}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleOpenBackupFolder}
+                  >
+                    <FolderOpen className="h-4 w-4" />
+                    <span>{t("openBackupFolder")}</span>
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleChooseBackupFolder}
+                  >
+                    <span>{t("chooseBackupFolder")}</span>
+                  </Button>
+
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={backingUp}
+                    onClick={handleBackupNow}
+                    className="ms-auto"
+                  >
+                    <RefreshCw className={`h-4 w-4 ${backingUp ? "animate-spin" : ""}`} />
+                    <span>{t("desktopBackupNow")}</span>
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          )}
+        </div>
 
         {/* Side panels: About, Demo Data & Wizard */}
         <div className="space-y-6">

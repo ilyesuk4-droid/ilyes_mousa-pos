@@ -2,13 +2,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Link, createRootRouteWithContext, useRouter, HeadContent, Scripts, ClientOnly, type ErrorComponentProps,
 } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 import { I18nProvider } from "@/lib/i18n";
 import { PrintProvider } from "@/components/print";
 import { AppShell } from "@/components/AppShell";
+import { backupRepo } from "@/data";
 
 function NotFoundComponent() {
   return (
@@ -51,9 +52,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary" },
     ],
     links: [
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
@@ -75,6 +73,43 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    if (typeof navigator !== "undefined" && navigator.storage?.persist) {
+      navigator.storage.persist().catch(() => {});
+    }
+
+    if (typeof window === "undefined" || !window.electronAPI?.isElectron) return;
+
+    const performBackup = async () => {
+      try {
+        const data = await backupRepo.exportAll();
+        await window.electronAPI?.backupNow(JSON.stringify(data));
+        localStorage.setItem("lastAutoBackup", Date.now().toString());
+      } catch (err) {
+        console.error("Auto-backup failed:", err);
+      }
+    };
+
+    const lastAutoBackup = localStorage.getItem("lastAutoBackup");
+    const lastTime = lastAutoBackup ? parseInt(lastAutoBackup, 10) : 0;
+    const now = Date.now();
+    const oneDay = 24 * 60 * 60 * 1000;
+
+    if (!lastTime || now - lastTime > oneDay) {
+      void performBackup();
+    }
+
+    const onBeforeUnload = () => {
+      void performBackup();
+    };
+
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", onBeforeUnload);
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ClientOnly fallback={<div className="grid min-h-screen place-items-center text-muted-foreground">…</div>}>
